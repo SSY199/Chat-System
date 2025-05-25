@@ -8,6 +8,11 @@ import contactsRoutes from "./routes/contact.route.js";
 import { setupSocket } from "./socket.js";
 import messageRoutes from "./routes/message.route.js";
 import channelRoutes from "./routes/channel.route.js";
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
@@ -33,6 +38,12 @@ app.use("/api/auth", authRoutes);
 app.use("/api/contacts", contactsRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/channel", channelRoutes);
+
+// Serve frontend build
+app.use(express.static(path.join(__dirname, '../client/dist')));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+});
 
 const server = app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
