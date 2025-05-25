@@ -5,7 +5,7 @@ import Channel from "./models/channel.model.js";
 export const setupSocket = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: process.env.ORIGIN,
+      origin: [process.env.ORIGIN, "https://chat-system-frontend-og79.onrender.com"],
       methods: ["GET", "POST"],
       credentials: true,
     },

@@ -17,7 +17,9 @@ const databaseUrl = process.env.DATABASE_URL;
 
 app.use(
   cors({
-    origin: [process.env.ORIGIN],
+    origin: [process.env.ORIGIN,
+      "https://chat-system-frontend-og79.onrender.com", // Add your frontend URL here
+    ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
