@@ -26,7 +26,7 @@ export const createChatSlice = (set, get) => ({
   setIsDownloading: (isDownloading) => ({
     isDownloading
   }),
-  setFileUploadProgress: (fileUploadProgress) => ({
+  setFileUploadProgress: (fileUploadProgress) => set({
     fileUploadProgress
   }),
   setFileDownloadProgress: (fileDownloadProgress) => ({
@@ -65,8 +65,10 @@ export const createChatSlice = (set, get) => ({
   },
 
   addChannel: (channel) => {
-    const channels = get().channels;
-    set({channels: [channel, ...channels]});
+    //const channels = get().channels;
+    set(state => ({
+      channels: [channel, ...state.channels]
+    }));
   },
 
   addChannelInList: (message) => {

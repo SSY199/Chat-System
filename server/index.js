@@ -17,8 +17,7 @@ const databaseUrl = process.env.DATABASE_URL;
 
 app.use(
   cors({
-    origin: [process.env.ORIGIN,
-      "https://chat-system-frontend-og79.onrender.com", // Add your frontend URL here
+    origin: [process.env.ORIGIN, // Add your frontend URL here
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
@@ -36,7 +35,7 @@ app.use("/api/contacts", contactsRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/channel", channelRoutes);
 
-const server = app.listen(port, "0.0.0.0", () => {  // Add "0.0.0.0"
+const server = app.listen(port, () => {  // Add "0.0.0.0"
   console.log(`Server is running on port ${port}`);
 });
 
