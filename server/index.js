@@ -20,8 +20,7 @@ const databaseUrl = process.env.DATABASE_URL;
 
 app.use(
   cors({
-    origin: [process.env.ORIGIN, // Add your frontend URL here
-    ],
+    origin: [process.env.ORIGIN || "http://localhost:5173"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
@@ -40,13 +39,13 @@ app.use("/api/channel", channelRoutes);
 
 app.use(express.static(path.join(__dirname, "../client/dist")));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
+app.get(/.*/, (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/dist/index.html"));
 });
 
 
 
-const server = app.listen(port, () => {  // Add "0.0.0.0"
+const server = app.listen(port, "0.0.0.0", () => {  // Add "0.0.0.0"
   console.log(`Server is running on port ${port}`);
 });
 
