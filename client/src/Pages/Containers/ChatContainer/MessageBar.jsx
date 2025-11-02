@@ -87,20 +87,20 @@ const MessageBar = () => {
           if (selectedChatType === "contact") {
             socket.emit("sendMessage", {
               sender: userInfo.id,
-              content: message,
+              content: undefined,
               recipient: selectedChatData._id,
               messageType: "file",
               fileUrl: res.data.filePath,
             });
+          } else if (selectedChatType === "channel") {
+            socket.emit("send-channel-message", {
+              sender: userInfo.id,
+              content: undefined,
+              messageType: "file",
+              fileUrl: res.data.filePath,
+              channelId: selectedChatData._id,
+            });
           }
-        } else if (selectedChatType === "channel") {
-          socket.emit("send-channel-message", {
-            sender: userInfo.id,
-            content: undefined,
-            messageType: "file",
-            fileUrl: res.data.filePath,
-            channelId: selectedChatData._id,
-          });
         }
       }
     } catch (error) {

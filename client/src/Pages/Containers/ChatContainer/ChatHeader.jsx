@@ -39,16 +39,25 @@ const ChatHeader = () => {
               ) : (
                 <div className="bg-[#ffffff22]  w-15 h-15 rounded-full flex items-center text-2xl justify-center">
                 #
-                </ div>
+                </div>
               )
             }
           </div>
           <div className="">
-            <div className="font-bold text-lg">{selectedChatData.name}</div>
-
-            {selectedChatType === "contact" && selectedChatData.firstName
-              ? `${selectedChatData.firstName} ${selectedChatData.lastName}`
-              : selectedChatData.email || ""}
+            {selectedChatType === "contact" ? (
+              <>
+                <div className="font-bold text-lg">
+                  {selectedChatData.firstName
+                    ? `${selectedChatData.firstName} ${selectedChatData.lastName}`
+                    : selectedChatData.email}
+                </div>
+                {selectedChatData.firstName && (
+                  <div className="text-sm text-gray-400">{selectedChatData.email}</div>
+                )}
+              </>
+            ) : (
+              <div className="font-bold text-lg">{selectedChatData.name}</div>
+            )}
           </div>
         </div>
         <div className="flex items-center justify-center gap-5">

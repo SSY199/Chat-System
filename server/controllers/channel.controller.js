@@ -44,6 +44,7 @@ export const getChannels = async (req, res, next) => {
     return res.status(200).json({ channels });
   } catch (error) {
     console.log(error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -59,6 +60,7 @@ export const getChannelMessages = async (req, res, next) => {
   return res.status(200).json({messages});
   } catch (error) {
     console.log(error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 

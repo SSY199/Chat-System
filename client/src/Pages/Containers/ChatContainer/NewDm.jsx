@@ -51,26 +51,11 @@ const NewDm = () => {
     }
   } 
 
-  const selectNewContact = async (contact) => {
-    try {
-      setOpenNewContactModal(false);
-      setSelectedChatType("contact");
-      setSelectedChatData(contact);
-      setSearchedContacts([]);
-      // const response = await apiClient.post(SEARCH_CONTACTS_ROUTES, {
-      //   searchTerm,
-      // }, {
-      //   withCredentials: true,
-      // });
-      
-      // if(response.status === 200) {
-      //   setSearchedContacts(response.data.contacts);
-      // } else {
-      //   setSearchedContacts([]);
-      // }
-    } catch (error) {
-      console.error("Error fetching contacts:", error);
-    }
+  const selectNewContact = (contact) => {
+    setOpenNewContactModal(false);
+    setSelectedChatType("contact");
+    setSelectedChatData(contact);
+    setSearchedContacts([]);
   }
 
   return (

@@ -120,7 +120,7 @@ export const getAllContacts = async(req, res) => {
     return res.status(200).json({ contacts });
     
   } catch (error) {
-    console.log({error});
-    return res.status(500).send("Internal Server Error");
+    console.error("Error fetching all contacts:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 }

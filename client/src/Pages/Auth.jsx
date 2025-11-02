@@ -19,24 +19,24 @@ const Auth = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const validateSignup = () => {
-    if (!email.length && !password.length && !confirmPassword.length) {
-      toast.error("Email and Password are required!");
-      return false;
-    }
     if(!email.length) {
       toast.error("Email is required!");
       return false;
     }
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match!");
+    if(!password.length) {
+      toast.error("Password is required!");
+      return false;
+    }
+    if(!confirmPassword.length) {
+      toast.error("Confirm Password is required!");
       return false;
     }
     if (password.length < 5) {
       toast.error("Password must be at least 5 characters long!");
       return false;
     }
-    if(!password.length) {
-      toast.error("Password is required!");
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match!");
       return false;
     }
     return true;
@@ -71,15 +71,18 @@ const Auth = () => {
         );
         
         if(res.status === 200) {
-          toast.success("Login successful!");
-        if(res.data.user.profileSetup) {
-          console.log("User info received:", res.data.user);
           setUserInfo(res.data.user);
-          navigate("/chat");
-        } else {
-          navigate("/profile");
+          toast.success("Login successful!");
+          console.log("User info received:", res.data.user);
+          // Use setTimeout to ensure state updates before navigation
+          setTimeout(() => {
+            if(res.data.user.profileSetup) {
+              navigate("/chat");
+            } else {
+              navigate("/profile");
+            }
+          }, 0);
         }
-      }
       console.log(res.data);
     } catch (err) {
         console.error("Login error:", err.response?.data || err.message);
@@ -103,7 +106,10 @@ const Auth = () => {
           console.log("User info received:", res.data.user);
           setUserInfo(res.data.user);
           toast.success("Signup successful! Please complete your profile.");
-          navigate("/profile"); 
+          // Use setTimeout to ensure state updates before navigation
+          setTimeout(() => {
+            navigate("/profile");
+          }, 0);
         }
       } catch (err) {
         console.error("Signup error:", err.response?.data || err.message);

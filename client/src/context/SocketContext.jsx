@@ -56,7 +56,7 @@ export const SocketProvider = ({ children }) => {
 
       socketRef.current.on("receiveMessage", handleReceiveMessage);
       socketRef.current.on(
-        "recieve-channel-message",
+        "receive-channel-message",
         handleReceiveChannelMessage
       );
 

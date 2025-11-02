@@ -1,11 +1,7 @@
-export const createAuthSlice = (set) => ({
-  userInfo: null,
-  setUserInfo: (userInfo) => set({ userInfo }),
-});
 export const createChatSlice = (set, get) => ({
   selectedChatType: undefined,
   selectedChatData: undefined,
-  selectedChatMesssage: [],
+  selectedChatMessage: [],
   directMessagesContacts: [],
   isUploading:false,
   isDownloading: false,
@@ -23,13 +19,13 @@ export const createChatSlice = (set, get) => ({
   setIsUploading: (isUploading) => set({
     isUploading
   }),
-  setIsDownloading: (isDownloading) => ({
+  setIsDownloading: (isDownloading) => set({
     isDownloading
   }),
   setFileUploadProgress: (fileUploadProgress) => set({
     fileUploadProgress
   }),
-  setFileDownloadProgress: (fileDownloadProgress) => ({
+  setFileDownloadProgress: (fileDownloadProgress) => set({
     fileDownloadProgress
   }),
   setChannels: (channels) => set({ channels }),
@@ -40,17 +36,17 @@ export const createChatSlice = (set, get) => ({
     set({
       selectedChatData: undefined,
       selectedChatType: undefined,
-      selectedChatMesssage: [],
+      selectedChatMessage: [],
     });
   },
 
   addMessage: (message) => {
-    const selectedChatMesssage = get().selectedChatMesssage;
+    const selectedChatMessage = get().selectedChatMessage;
     const selectedChatType = get().selectedChatType;
 
     set({
-      selectedChatMesssage: [
-        ...selectedChatMesssage,
+      selectedChatMessage: [
+        ...selectedChatMessage,
         {
           ...message,
           recipient:

@@ -65,7 +65,7 @@ const MessageContainer = () => {
       } else if (selectedChatType === "channel") {
         getChannelMessages();
       }
-  });
+  }, [selectedChatData, selectedChatType]);
 
   const isAtBottom = () => {
     if (!containerRef.current) return false;

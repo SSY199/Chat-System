@@ -69,7 +69,7 @@ const Profile = () => {
         );
 
         if (res.status === 200) {
-          setUserInfo({ ...res.data, profileSetup:true });
+          setUserInfo(res.data.user);
           navigate("/chat");
         } else {
           toast.error("Error updating profile");

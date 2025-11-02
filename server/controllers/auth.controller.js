@@ -1,10 +1,9 @@
 import User from "../models/auth.model.js";
 import jwt from "jsonwebtoken";
-import cookieParser from "cookie-parser";
 import { compare } from "bcrypt";
 import { renameSync, unlinkSync } from "fs";
 
-const maxAge = 3 * 24 * 60 * 60;
+const maxAge = 30 * 24 * 60 * 60;
 
 const createToken = (email, userId) => {
   return jwt.sign({ email, userId }, process.env.JWT_KEY, {
@@ -158,53 +157,63 @@ export const updateProfile = async (req, res) => {
 }
 
 export const updateProfileImage = async (req, res) => {
-  if(!req.file){
-    return res.status(400).json({ message: "No file uploaded" });
+  try {
+    if(!req.file){
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+    const date = Date.now();
+    const fileName = `uploads/profiles/${date}-${req.file.originalname}`;
+    renameSync(req.file.path, fileName);
+    const updatedUser = await User.findByIdAndUpdate(
+      req.userId,
+      { image: fileName },
+      { new: true, runValidators: true }
+    );
+    return res.status(200).json({
+      message: "Profile image updated successfully",
+      user: {
+        id: updatedUser._id,
+        email: updatedUser.email,
+        firstName: updatedUser.firstName,
+        lastName: updatedUser.lastName,
+        color: updatedUser.color,
+        profileSetup: updatedUser.profileSetup,
+        image: updatedUser.image,
+      },
+    });
+  } catch (error) {
+    console.error("Error updating profile image:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
-  const date = Date.now();
-  const fileName = `uploads/profiles/${date}-${req.file.originalname}`;
-  renameSync(req.file.path, fileName);
-  const updatedUser = await User.findByIdAndUpdate(
-    req.userId,
-    { image: fileName },
-    { new: true, runValidators: true }
-  );
-  return res.status(200).json({
-    message: "Profile image updated successfully",
-    user: {
-      id: updatedUser._id,
-      email: updatedUser.email,
-      firstName: updatedUser.firstName,
-      lastName: updatedUser.lastName,
-      color: updatedUser.color,
-      profileSetup: updatedUser.profileSetup,
-      image: updatedUser.image,
-    },
-  });
 }
 
 export const deleteProfileImage = async (req, res) => {
-  const user = await User.findById(req.userId);
-  if (!user) {
-    return res.status(404).json({ message: "User not found" });
+  try {
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (user.image) {
+      unlinkSync(user.image);
+      user.image = null;
+      await user.save();
+    }
+    return res.status(200).json({
+      message: "Profile image deleted successfully",
+      user: {
+        id: user._id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        color: user.color,
+        profileSetup: user.profileSetup,
+        image: user.image,
+      },
+    });
+  } catch (error) {
+    console.error("Error deleting profile image:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
-  if (user.image) {
-    unlinkSync(user.image);
-    user.image = null;
-    await user.save();
-  }
-  return res.status(200).json({
-    message: "Profile image deleted successfully",
-    user: {
-      id: user._id,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      color: user.color,
-      profileSetup: user.profileSetup,
-      image: user.image,
-    },
-  });
 }
 
 export const logout = async (req, res) => {

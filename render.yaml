@@ -1,0 +1,29 @@
+services:
+  # Backend + Frontend (Single Web Service)
+  - type: web
+    name: chat-system
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: cd server && npm install && npm run build
+    startCommand: cd server && npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20.11.0
+      - key: PORT
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_KEY
+        sync: false
+      - key: ORIGIN
+        sync: false
+    healthCheckPath: /
+    autoDeploy: true
+
+  # MongoDB Database (if you want to use Render's MongoDB)
+  # Alternatively, you can use MongoDB Atlas
+  # - type: pserv
+  #   name: chat-system-mongodb
+  #   runtime: docker
+  #   plan: free
