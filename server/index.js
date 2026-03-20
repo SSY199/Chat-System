@@ -9,6 +9,9 @@ import { setupSocket } from "./socket.js";
 import messageRoutes from "./routes/message.route.js";
 import channelRoutes from "./routes/channel.route.js";
 import path from "path";
+import dns from "dns";
+
+dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
 dotenv.config();
 
