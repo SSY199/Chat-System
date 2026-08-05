@@ -44,6 +44,17 @@ export const createChatSlice = (set, get) => ({
     const selectedChatMessage = get().selectedChatMessage;
     const selectedChatType = get().selectedChatType;
 
+    const getId = (value) => {
+      if (value == null) return value;
+      if (typeof value === "object") return value._id ?? value.id;
+      return value;
+    };
+
+    // Avoid duplicate bubbles if the same message is echoed twice
+    if (message._id && selectedChatMessage.some((m) => String(m._id) === String(message._id))) {
+      return;
+    }
+
     set({
       selectedChatMessage: [
         ...selectedChatMessage,
@@ -52,9 +63,9 @@ export const createChatSlice = (set, get) => ({
           recipient:
             selectedChatType === "channel"
               ? message.recipient
-              : message.recipient._id,
+              : getId(message.recipient),
           sender:
-            selectedChatType === "channel" ? message.sender : message.sender._id,
+            selectedChatType === "channel" ? message.sender : getId(message.sender),
         },
       ],
     });
@@ -78,21 +89,18 @@ export const createChatSlice = (set, get) => ({
   },
 
   addContactsInDMContacts: (message) => {
-    const userId = get().userInfo.id;
-    const fromId = 
-      message.sender._id === userId 
-        ? message.recipient._id 
-        : message.sender._id;
-  
-    const fromData = 
-      message.sender._id === userId 
-        ? message.recipient 
-        : message.sender;
-  
+    const userId = String(get().userInfo.id);
+    const senderId = String(message.sender?._id ?? message.sender);
+    const recipientId = String(message.recipient?._id ?? message.recipient);
+    const fromId = senderId === userId ? recipientId : senderId;
+
+    const fromData =
+      senderId === userId ? message.recipient : message.sender;
+
     const dmContacts = get().directMessagesContacts;
-  
-    const data = dmContacts.find((contact) => contact._id === fromId);
-    const index = dmContacts.findIndex((contact) => contact._id === fromId);
+
+    const data = dmContacts.find((contact) => String(contact._id) === fromId);
+    const index = dmContacts.findIndex((contact) => String(contact._id) === fromId);
   
     //console.log({ data, index, dmContacts, userId, message, fromData });
   

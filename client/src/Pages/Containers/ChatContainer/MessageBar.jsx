@@ -40,6 +40,12 @@ const MessageBar = () => {
   };
 
   const handleSendMessage = async () => {
+    if (!message.trim()) return;
+    if (!socket) {
+      console.error("Socket not connected");
+      return;
+    }
+
     if (selectedChatType === "contact") {
       socket.emit("sendMessage", {
         sender: userInfo.id,
@@ -84,6 +90,10 @@ const MessageBar = () => {
         });
         if (res.status === 200) {
           setIsUploading(false);
+          if (!socket) {
+            console.error("Socket not connected");
+            return;
+          }
           if (selectedChatType === "contact") {
             socket.emit("sendMessage", {
               sender: userInfo.id,

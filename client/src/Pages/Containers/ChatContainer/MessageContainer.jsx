@@ -113,17 +113,25 @@ const MessageContainer = () => {
     }
   };
 
-  const renderDMMessages = (message) => (
+  const getSenderId = (sender) => {
+    if (sender == null) return "";
+    if (typeof sender === "object") return String(sender._id ?? sender.id ?? "");
+    return String(sender);
+  };
+
+  const renderDMMessages = (message) => {
+    // Own messages on the right; the other person's on the left
+    const isSentByMe = getSenderId(message.sender) === String(userInfo.id);
+
+    return (
     <div
-      className={`my-3 ${
-        message.sender === selectedChatData._id ? "text-left" : "text-right"
-      }`}
+      className={`my-3 ${isSentByMe ? "text-right" : "text-left"}`}
       key={`dm-${message._id}`}
     >
       {message.messageType === "text" && (
         <div
           className={`${
-            message.sender !== selectedChatData._id
+            isSentByMe
               ? "bg-[#8417ff] text-white rounded-br-none"
               : "bg-[#2a2b33] text-white rounded-bl-none"
           } px-4 py-2 rounded-2xl inline-block max-w-[80%] break-words`}
@@ -135,7 +143,7 @@ const MessageContainer = () => {
       {message.messageType === "file" && (
         <div
           className={`${
-            message.sender !== selectedChatData._id
+            isSentByMe
               ? "bg-[#8417ff]/10 border-[#8417ff]/40"
               : "bg-[#2a2b33]/10 border-[#ffffff]/20"
           } border rounded-2xl my-2 max-w-[70%] inline-block overflow-hidden`}
@@ -182,12 +190,16 @@ const MessageContainer = () => {
       </div>
     </div>
   );
+  };
 
   const renderChannelMessages = (message) => {
-    const isCurrentUser = message.sender._id === userInfo.id;
-    const senderInitial = message.sender.firstName 
-      ? message.sender.firstName.charAt(0).toUpperCase()
-      : message.sender.email.charAt(0).toUpperCase();
+    const sender = typeof message.sender === "object" && message.sender
+      ? message.sender
+      : { _id: message.sender };
+    const isCurrentUser = getSenderId(sender) === String(userInfo.id);
+    const senderInitial = sender.firstName
+      ? sender.firstName.charAt(0).toUpperCase()
+      : (sender.email || "?").charAt(0).toUpperCase();
 
     return (
       <div 
@@ -197,9 +209,9 @@ const MessageContainer = () => {
         {!isCurrentUser && (
           <div className="flex items-center justify-start gap-3 mb-1">
             <Avatar className="h-8 w-8 rounded-full overflow-hidden">
-              {message.sender.image && (
+              {sender.image && (
                 <AvatarImage
-                  src={`${HOST}/${message.sender.image}`}
+                  src={`${HOST}/${sender.image}`}
                   alt="profile"
                   className="object-cover h-full w-full bg-black"
                   aria-label="User Profile Image"
@@ -207,7 +219,7 @@ const MessageContainer = () => {
               )}
               <AvatarFallback
                 className={`uppercase h-8 w-8 font-bold text-sm border flex items-center justify-center rounded-full ${
-                  getColor(message.sender.color || "gray")
+                  getColor(sender.color || "gray")
                 }`}
                 aria-label="User Initial"
               >
@@ -215,7 +227,7 @@ const MessageContainer = () => {
               </AvatarFallback>
             </Avatar>
             <span className="text-sm text-white/60">
-              {`${message.sender.firstName || ""} ${message.sender.lastName || ""}`.trim()}
+              {`${sender.firstName || ""} ${sender.lastName || ""}`.trim()}
             </span>
           </div>
         )}
@@ -223,7 +235,7 @@ const MessageContainer = () => {
         {message.messageType === "text" && (
           <div
             className={`${
-              !isCurrentUser
+              isCurrentUser
                 ? "bg-[#8417ff] text-white rounded-br-none"
                 : "bg-[#2a2b33] text-white rounded-bl-none"
             } px-4 py-2 rounded-2xl inline-block max-w-[80%] break-words`}
@@ -235,7 +247,7 @@ const MessageContainer = () => {
         {message.messageType === "file" && (
           <div
             className={`${
-              !isCurrentUser
+              isCurrentUser
                 ? "bg-[#8417ff]/10 border-[#8417ff]/40"
                 : "bg-[#2a2b33]/10 border-[#ffffff]/20"
             } border rounded-2xl my-2 max-w-[70%] inline-block overflow-hidden`}
